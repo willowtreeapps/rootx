@@ -56,9 +56,12 @@ func SelectAll(db Rootx, sqlKey string, instances interface{}, args ...interface
 
 // SelectOne selects a single struct
 func SelectOne(db Rootx, sqlKey string, instance interface{}, args ...interface{}) error {
-	err := db.Get(instance, db.SQL(sqlKey), args...)
+	rows, err := db.Queryx(db.SQL(sqlKey), args...)
 	if err != nil {
-		return &Error{sqlKey, "SelectOne", err}
+		return &Error{sqlKey, "SelectOne-Queryx", err}
+	}
+	if err = ScanOne(instance, rows); err != nil {
+		return &Error{sqlKey, "SelectOne-ScanOne", err}
 	}
 	return nil
 }
